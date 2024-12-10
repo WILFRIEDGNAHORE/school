@@ -20,7 +20,7 @@ class CustomAdmin(admin.ModelAdmin):
     desactivate.short_description = "permet de desactiver le champs selectionner"
 
 class StudentAdmin(CustomAdmin):
-    list_display = ('user','classe','image_view','status')
+    list_display = ('user','ville','classe','image_view','status')
     list_display_links = ['user',]
     search_fields = ('user',)
     ordering = ('user',)

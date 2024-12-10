@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'chat.apps.ChatConfig',
     'quiz.apps.QuizConfig',
     'forum.apps.ForumConfig',
+    'widget_tweaks',
+    
 ]
 
 MIDDLEWARE = [
@@ -75,6 +77,8 @@ TEMPLATES = [
         },
     },
 ]
+
+
 
 WSGI_APPLICATION = 'Learn.wsgi.application'
 

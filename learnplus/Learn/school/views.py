@@ -6,26 +6,46 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User 
 
 # Create your views here.
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib import messages
+
+from django.shortcuts import render, redirect
+from .forms import LoginForm
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib import messages
+
 def login(request):
     if request.user.is_authenticated:
-        try:
-            try:
-                print("1")
-                if request.user.student_user:
+        # Redirection si l'utilisateur est connecté
+        if hasattr(request.user, 'student_user'):
+            return redirect('index_student')
+        elif hasattr(request.user, 'instructor'):
+            return redirect('dashboard')
+        else:
+            return redirect('/admin/')
+    
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                auth_login(request, user)
+                if hasattr(user, 'student_user'):
                     return redirect('index_student')
-            except:
-                print("2")
-                if request.user.instructor:
+                elif hasattr(user, 'instructor'):
                     return redirect('dashboard')
-        except Exception as e:
-            print(e)
-            print("3")
-            return redirect("/admin/")
+                else:
+                    return redirect('/admin/')
+            else:
+                messages.error(request, "Invalid username or password. Please try again.")
     else:
-        datas = {
-
-        }
-        return render(request, 'pages/guest-login.html', datas)
+        form = LoginForm()
+    
+    return render(request, 'pages/guest-login.html', {'form': form})
 
 def signup(request):
     if request.user.is_authenticated:

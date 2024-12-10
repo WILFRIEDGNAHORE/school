@@ -1,7 +1,9 @@
 from django.urls import path
-from . import views 
+from . import views
+from django.contrib.auth.views import LoginView,LogoutView
 
 urlpatterns = [
+    path('login', LoginView.as_view(template_name='school\learnplus\Learn\templates\pages\guest-login.html')),
     path('', views.index, name="index_student"), 
     # path('payment', views.payment, name='payment'),
     # path('subscription', views.subscription, name='subscription'), 
@@ -30,6 +32,7 @@ urlpatterns = [
     path('take_course/<slug>', views.take_course, name='take-course'),
     path('take_quiz', views.take_quiz, name='take-quiz'),
     path('view_course', views.view_course, name='view-course'),
+    path('login', LoginView.as_view(template_name='school\learnplus\Learn\templates\pages\guest-login.html')),
 
 
     ########## post ###############

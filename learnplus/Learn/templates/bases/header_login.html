@@ -62,74 +62,7 @@
    <!-- vue -->
    <script src="/static/assets/js/vue.js"></script>
 
-   <script>
-    // Block Vue JS  
-    new Vue({
-        el: '#login',
-        data: {
-            username: '',
-            password: '',
-            isregister: false,
-            loader: false,
-            isSuccess: false,
-            error: false,
-            base_url: window.location.protocol + "//" + window.location.host ,
-        },
-        delimiters: ["${", "}"],
-        mounted() { },
-        methods: {
-            login: function () {
-                if (!this.isregister) {
-                    this.error = false
-                    this.isSuccess = false
-                    this.isregister = true
-                    if (this.username == "" || this.password == "") {
-                        this.message = "Veuillez remplir correctement les champs";
-                        this.error = true
-                        this.isSuccess = false
-                        this.isregister = false;
-                    } else {
-                        axios.defaults.xsrfCookieName = 'csrftoken'
-                        axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-                        axios.post(this.base_url + '/post', {
-                            username: '' + this.username,
-                            password: '' + this.password,
-                        }).then(response => {
-                            console.log(response)
-                            this.isregister = false;
-                            if (response.data.success) {
-                                this.isSuccess = true
-                                this.error = false
-                                this.message = response.data.message
-                                this.success = response.data.success
-                                var url_string = window.location.href; //window.location.href
-                                var url = new URL(url_string);
-                                var next = url.searchParams.get("next");
-                                console.log(next);
-                                if (next != ""){
-                                    window.location.replace(this.base_url + next);
-                                }else{
-                                window.location.replace(this.base_url + "/" + response.data.redirect);
-                                }
-                            } else {
-                                this.error = true
-                                this.message = response.data.message
-                                this.success = response.data.success
-                                this.isSuccess = false
-                            }
-                            console.log("success variable" + this.isSuccess)
-                            // console.log("success variable"+this.error)
-                        })
-                            .catch((err) => {
-                                this.isregister = false;
-                                console.log(err);
-                            })
-                    }
-                }
-            },
-        }
-    });
-</script>
+   
    
 
 

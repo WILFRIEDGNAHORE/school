@@ -12,6 +12,29 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 
+
+@login_required(login_url = 'login')
+def profile(request):
+    if request.user.is_authenticated:
+        try:
+            try:
+                print("1")
+                if request.user.student_user:
+                    return redirect('index_student')
+            except Exception as e:
+                print(e)
+                print("2")
+                if request.user.instructor:
+                    datas = {
+
+                           }
+                    return render(request,'pages/instructor-profile.html',datas)
+        except Exception as e:
+            print(e)
+            print("3")
+            return redirect("/admin/")
+        
+
 # Create your views here.
 @login_required(login_url = 'login')
 def dashboard(request):
@@ -35,7 +58,9 @@ def dashboard(request):
             print("3")
             return redirect("/admin/")
     
- 
+
+
+
 
 
 @login_required(login_url = 'login')
@@ -532,26 +557,6 @@ def messages(request, classe):
 
 
 
-@login_required(login_url = 'login')
-def profile(request):
-    if request.user.is_authenticated:
-        try:
-            try:
-                print("1")
-                if request.user.student_user:
-                    return redirect('index_student')
-            except Exception as e:
-                print(e)
-                print("2")
-                if request.user.instructor:
-                    datas = {
-
-                           }
-                    return render(request,'pages/instructor-profile.html',datas)
-        except Exception as e:
-            print(e)
-            print("3")
-            return redirect("/admin/")
 
 
 
