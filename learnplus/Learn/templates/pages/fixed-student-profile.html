@@ -31,18 +31,18 @@
                             </p>
                             <div class="text-muted d-flex align-items-center mb-2">
                                 <i class="material-icons mr-1">account_box</i>
-                                <div class="flex">Student since 2012</div>
+                                <div class="flex">Student since {{ user.student_user.date_add }}</div>
                             </div>
                             <div class="text-muted d-flex align-items-center mb-4">
                                 <i class="material-icons mr-1">location_on</i>
-                                <div class="flex">Romania, Europe</div>
+                                <div class="flex">{{ user.student_user.ville }}</div>
                             </div>
 
                             <h4>BIO</h4>
-                            <p class="text-black-70 measure-paragraph">Fueled by my passion for understanding the nuances of cross-cultural advertising, I consider myself a forever student, eager to both build on my academic foundations in psychology and sociology and stay in tune with the latest digital marketing strategies through continued coursework.</p>
+                            <p class="text-black-70 measure-paragraph">{{ user.student_user.bio }}</p>
 
                             <h4>CLasse</h4>
-                            <p class="text-black-70 measure-paragraph">I’m currently working as a freelance marketing director and always interested in a challenge. Here’s how to reach out and connect.</p>
+                            <p class="text-black-70 measure-paragraph">{{ user.student_user.classe }}</p>
                         </div>
                         <div class="col-sm">
 

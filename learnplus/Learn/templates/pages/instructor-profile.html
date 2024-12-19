@@ -11,22 +11,16 @@
                         </ol>
 
                         <div class="text-center">
-                            <a href="#"><img src="/static/assets/images/people/110/guy-8.jpg" alt="" class="rounded-circle"></a>
-                            <h1 class="h2 mb-0 mt-1">Adrian Demian</h1>
-                            <p class="lead text-muted mb-0">Florida, USA</p>
+                            <a href="#"><img src="{{user.instructor.photo.url}}" alt="" class="rounded-circle"></a>
+                            <h1 class="h2 mb-0 mt-1">{{user.first_name}} {{user.last_name}} </h1>
+                            <p class="lead text-muted mb-0">{{user.username}}</p>
                             <div class="badge badge-primary ">INSTRUCTOR</div>
                             <hr>
-                            <h5 class="text-muted mb-1">Instructor Rating</h5>
-                            <div class="rating">
-                                <i class="material-icons text-success">star</i>
-                                <i class="material-icons text-success">star</i>
-                                <i class="material-icons text-success">star</i>
-                                <i class="material-icons text-muted-light">star_border</i>
-                                <i class="material-icons text-muted-light">star_border</i>
-                            </div>
+                            <h5 class="text-muted mb-1">Email: {{user.email}}</h5>
+                            
                         </div>
                         <hr>
-                        <h4>Courses by Adrian</h4>
+                        <h4>Courses by {{user.last_name}}</h4>
                         <div class="card-columns">
                             <div class="card">
                                 <div class="card-header">
