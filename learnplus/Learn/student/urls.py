@@ -21,6 +21,7 @@ urlpatterns = [
     path('forum_lesson/<slug>', views.forum_lesson, name='forum-lesson'),
     path('forum_ask', views.forum_ask, name='forum-ask'),
     path('forum_thread/<slug>', views.forum_thread, name='forum-thread'),
+    path('forum_thread/<slug>/reponse', views.post_forum_reponse, name='post_forum_reponse'),
     path('help_center', views.help_center, name='help-center'),
     path('messages/<str:classe>/', views.messages, name='messages'),
     path('my_courses', views.my_courses, name='my-courses'),

@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.utils.text import slugify
+import uuid
 
 # Create your models here.
 
@@ -42,8 +43,16 @@ class Reponse(models.Model):
     slug = models.SlugField(unique=True, null=True,  blank=True)
 
     def save(self, *args, **kwargs):
-        self.slug = '-'.join((slugify(self.sujet.titre), slugify(self.date_add)))
-        super(Reponse, self).save(*args, **kwargs)
+        if not self.pk:
+            super().save(*args, **kwargs)
+
+        if not self.slug:
+            random_id = str(uuid.uuid4())[:8]
+            base_slug = slugify(self.sujet.titre)
+            self.slug = f"{base_slug}-{random_id}"
+            return super().save(update_fields=["slug"])
+        else:
+            super().save(*args, **kwargs)
 
 
     class Meta:

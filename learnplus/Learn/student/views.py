@@ -11,6 +11,9 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from . import models
 from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from forum.models import  Reponse  # Adaptez selon vos modèles
 
 
 # Create your views here.
@@ -693,7 +696,7 @@ def take_course(request, slug):
         except Exception as e:
             print(e)
             print("3")
-            return redirect('my_courses')
+            return redirect('my-courses')
    
 
 @login_required(login_url = 'login')
@@ -881,3 +884,38 @@ def post_forum_g(request):
         "forum": val,
         }
     return JsonResponse(data,safe=False)
+
+@login_required
+@csrf_exempt  # ou configurez la protection CSRF correctement
+def post_forum_reponse(request, slug):
+    if request.method == 'POST':
+        reponse_content = request.POST.get('reponse', '').strip()
+        try:
+            sujet = forum_models.Sujet.objects.get(slug=slug)
+        except forum_models.Sujet.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Le sujet est introuvable.'
+            })
+
+        if not reponse_content:
+            return JsonResponse({
+                'success': False,
+                'message': 'Le contenu de la réponse est vide.'
+            })
+
+        forum_models.Reponse.objects.create(
+            sujet=sujet,
+            user=request.user,
+            reponse=reponse_content
+        )
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Votre réponse a été publiée avec succès.'
+        })
+
+    return JsonResponse({
+        'success': False,
+        'message': 'Méthode non autorisée.'
+    })
