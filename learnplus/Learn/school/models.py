@@ -4,20 +4,6 @@ from datetime import datetime
 
 
 
-# Create your models here.
-# class Filiere(models.Model):
-#     nom = models.CharField(max_length=255)
-#     date_add = models.DateTimeField(auto_now_add=True)
-#     date_update = models.DateTimeField(auto_now=True)
-#     status = models.BooleanField(default=True)
-
-
-#     class Meta:
-#         verbose_name = 'Filiere'
-#         verbose_name_plural = 'Filieres'
-
-#     def __str__(self):
-#         return self.nom
 
 class Matiere(models.Model):
     nom = models.CharField(max_length=255)

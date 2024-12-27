@@ -1,66 +1,37 @@
+# quiz/admin.py
+
 from django.contrib import admin
-from . import models
+from .models import Subject, Quiz, Question, Answer, TakenQuiz, StudentAnswer
 
-# Register your models here.
-class CustomAdmin(admin.ModelAdmin):
-    actions = ('activate','desactivate')
-    list_filter = ('status',)
-    list_per_page = 10
-    date_hierachy = "date_add"
+@admin.register(Subject)
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = ('name', 'color')
+    search_fields = ('name',)
 
-    def activate(self,request,queryset):
-        queryset.update(status=True)
-        self.message_user(request,'la selection a été effectué avec succes')
-    activate.short_description = "permet d'activer le champs selectionner"
+@admin.register(Quiz)
+class QuizAdmin(admin.ModelAdmin):
+    list_display = ('name', 'subject', 'classe', 'cours', 'owner', 'status')
+    search_fields = ('name', 'subject__name', 'classe__numeroClasse', 'cours__titre', 'owner__username')
+    list_filter = ('subject', 'classe', 'cours', 'status')
 
-    def desactivate(self,request,queryset):  
-        queryset.update(status=False)
-        self.message_user(request,'la selection a été effectué avec succes')
-    desactivate.short_description = "permet de desactiver le champs selectionner"
+@admin.register(Question)
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('quiz', 'text')
+    search_fields = ('text',)
 
-class QuestionAdmin(CustomAdmin):
-    list_display =('typequestion','point')
-    list_display_links = ['typequestion',]
-    search_fields = ('typequestion',)
-    fieldsets = [
-                 ("info question",{"fields":["typequestion","point","quiz","question"]}),
-                 ("standard",{"fields":["status"]})
-    ]
+@admin.register(Answer)
+class AnswerAdmin(admin.ModelAdmin):
+    list_display = ('question', 'text', 'is_correct')
+    search_fields = ('text',)
+    list_filter = ('is_correct',)
 
-class ReponseAdmin(CustomAdmin):
-    list_display = ('reponse','question','is_True','status')
-    list_display_links = ['reponse',]
-    search_fields = ('reponse',)
-    fieldsets = [
-                 ("info reponse",{"fields":["reponse","question","is_True"]}),
-                 ("standard",{"fields":["status"]})
-    ]
+@admin.register(TakenQuiz)
+class TakenQuizAdmin(admin.ModelAdmin):
+    list_display = ('student', 'quiz', 'score', 'percentage', 'date')
+    search_fields = ('student__user__username', 'quiz__name')
+    list_filter = ('quiz', 'date')
 
-class QuizAdmin(CustomAdmin):
-    list_display = ('date','titre','temps','status')
-    list_display_links = ['titre',]
-    search_fields = ('titre',)
-    fieldsets = [
-                 ("info quiz",{"fields":["date","titre","cours","temps"]}),
-                 ("standard",{"fields":["status"]})
-    ]
-
-class DevoirAdmin(CustomAdmin):
-    list_display = ('dateDebut','dateFermeture','chapitre','coefficient','support','status')
-    list_display_links = ('chapitre',)
-    search_fields = ('chapitre',)
-    fieldsets = [
-                 ("info devoir",{"fields":["dateDebut","dateFermeture",'chapitre','support' ]}),
-                 ("standard",{"fields":["status"]})
-    ]
-
-
-def _register(model,admin_class):
-    admin.site.register(model,admin_class)
-
-
-_register(models.Question, QuestionAdmin)
-_register(models.Reponse, ReponseAdmin)
-_register(models.Quiz, QuizAdmin)
-_register(models.Devoir, DevoirAdmin)
-
+@admin.register(StudentAnswer)
+class StudentAnswerAdmin(admin.ModelAdmin):
+    list_display = ('student', 'answer')
+    search_fields = ('student__user__username', 'answer__text')

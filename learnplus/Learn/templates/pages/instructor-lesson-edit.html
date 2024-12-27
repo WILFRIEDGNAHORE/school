@@ -119,7 +119,10 @@
                                     <button href="#" v-if="isregister" disabled 
                                         class="btn btn-success">Enregistrer</button>
                                     <a class="btn btn-danger btn-rounded" href="#" data-toggle="modal" data-target="#delete_lesson">Supprimer</a>
-                                    <button class="btn btn-outline-warning btn-rounded"> Ajouter un quizz</button>
+                                    <a class="btn btn-outline-warning btn-rounded" 
+   href="{% url 'instructor-quiz-add' %}?lesson_id={{ cours.id }}">
+   Ajouter un quizz
+</a>
                                     </center>
                                 </form>
                             </div>

@@ -1,38 +1,30 @@
+# instructor/admin.py
+
 from django.contrib import admin
-from . import models
-from django.utils.safestring import mark_safe
+from .models import Instructor
 
-# Register your models here.
-class CustomAdmin(admin.ModelAdmin):
-    actions = ('activate','desactivate')
-    list_filter = ('status',)
-    list_per_page = 6
-    date_hierachy = "date_add"
+@admin.register(Instructor)
+class InstructorAdmin(admin.ModelAdmin):
+    list_display = ('user', 'contact', 'adresse', 'classe', 'status', 'date_add')
+    search_fields = ('user__username', 'contact', 'adresse', 'bio', 'ville')
+    list_filter = ('classe', 'status', 'date_add', 'date_update')
+    readonly_fields = ('date_add', 'date_update', 'slug')
 
-    def activate(self,request,queryset):
+    actions = ['make_active', 'make_inactive']
+
+    def make_active(self, request, queryset):
         queryset.update(status=True)
-        self.message_user(request,'la selection a été effectué avec succes')
-    activate.short_description = "permet d'activer le champs selectionner"
+        self.message_user(request, "Les instructeurs sélectionnés sont maintenant actifs.")
 
-    def desactivate(self,request,queryset):  
+    make_active.short_description = "Marquer les instructeurs sélectionnés comme actifs"
+
+    def make_inactive(self, request, queryset):
         queryset.update(status=False)
-        self.message_user(request,'la selection a été effectué avec succes')
-    desactivate.short_description = "permet de desactiver le champs selectionner"
+        self.message_user(request, "Les instructeurs sélectionnés sont maintenant inactifs.")
 
-class InstructorAdmin(CustomAdmin):
-    list_display = ('user','contact','adresse','image_view','classe','status')
-    search_fields = ('user',)
-    ordering = ['user']
-    list_display_links =['user']
-    fieldsets = [
-                 ("info instructeur",{"fields":["user","contact","adresse","classe","photo"]}),
-                 ("standard",{"fields":["status"]})
-    ]
-    def image_view(self,obj):
-        return mark_safe("<img src ='{url}' width='100px',height='50px'>".format(url=obj.photo.url))
+    make_inactive.short_description = "Marquer les instructeurs sélectionnés comme inactifs"
 
-def _register(model,admin_class):
-    admin.site.register(model,admin_class)
-
-
-_register(models.Instructor, InstructorAdmin)
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return self.readonly_fields + ('slug',)
+        return self.readonly_fields

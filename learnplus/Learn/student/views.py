@@ -534,8 +534,9 @@ def quiz_list(request):
                 print(e)
                 print("2")
                 if request.user.student_user:
+                    
                     datas = {
-
+                                
                            }
                 return render(request,'pages/fixed-student-quiz-list.html',datas)
         except Exception as e:
