@@ -46,8 +46,9 @@ class Student(models.Model):
         """
         Retourne les questions non répondues par l'étudiant pour un quiz donné.
         """
-        answered_questions = self.quiz_answers \
-            .filter(answer__question__quiz=quiz) \
-            .values_list('answer__question__pk', flat=True)
-        questions = quiz.questions.exclude(pk__in=answered_questions).order_by('text')
+        answered_questions = self.quiz_answers.filter(answer__question__quiz=quiz).values_list('answer__question__pk', flat=True)
+        questions = quiz.questions.exclude(pk__in=answered_questions).order_by('text').prefetch_related('answers')
         return questions
+    
+    def get_successful_quizzes_count(self):
+        return self.quizzes.filter(takenquiz__student=self, takenquiz__percentage__gte=50).count()

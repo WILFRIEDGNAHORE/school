@@ -67,67 +67,49 @@
                                     <div class="media align-items-center">
                                         <div class="media-body">
                                             <h4 class="card-title">Quizzes</h4>
-                                            <p class="card-subtitle">Your Performance</p>
+                                            <p class="card-subtitle">Your Performance Overview</p>
                                         </div>
                                         <div class="media-right">
-                                            <a class="btn btn-sm btn-primary" href="#">Quiz results</a>
+                                            
                                         </div>
                                     </div>
                                 </div>
-
-
+                            
                                 <ul class="list-group list-group-fit mb-0">
-
+                                    {% for quiz in quizzes %}
                                     <li class="list-group-item">
                                         <div class="media align-items-center">
                                             <div class="media-body">
-                                                <a class="text-body" href="{% url 'quiz-results' %}"><strong>Title of quiz goes here?</strong></a><br>
+                                                <a class="text-body" href="{% url 'quiz_detail' quiz.id %}">
+                                                    <strong>{{ quiz.title }}</strong>
+                                                </a><br>
                                                 <div class="d-flex align-items-center">
-                                                    <small class="text-black-50 text-uppercase mr-2">Course</small>
-                                                    <a href="">Basics of HTML</a>
+                                                    <small class="text-black-50 text-uppercase mr-2">Course:</small>
+                                                    <a href="{% url 'course_detail' quiz.course.id %}" class="text-primary">{{ quiz.course.name }}</a>
                                                 </div>
                                             </div>
                                             <div class="media-right text-center d-flex align-items-center">
-                                                <span class="text-black-50 mr-3">Good</span>
-                                                <h4 class="mb-0">5.8</h4>
+                                                {% if quiz.score >= 8 %}
+                                                <span class="badge badge-success mr-2">Great</span>
+                                                <h4 class="mb-0 text-success">{{ quiz.score }}</h4>
+                                                {% elif quiz.score >= 5 %}
+                                                <span class="badge badge-info mr-2">Good</span>
+                                                <h4 class="mb-0">{{ quiz.score }}</h4>
+                                                {% else %}
+                                                <span class="badge badge-danger mr-2">Failed</span>
+                                                <h4 class="mb-0 text-danger">{{ quiz.score }}</h4>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </li>
-
-                                    <li class="list-group-item">
-                                        <div class="media align-items-center">
-                                            <div class="media-body">
-                                                <a class="text-body" href="{% url 'quiz-results' %}"><strong>Directives &amp; Routing</strong></a><br>
-                                                <div class="d-flex align-items-center">
-                                                    <small class="text-black-50 text-uppercase mr-2">Course</small>
-                                                    <a href="">Angular in Steps</a>
-                                                </div>
-                                            </div>
-                                            <div class="media-right text-center d-flex align-items-center">
-                                                <span class="text-black-50 mr-3">Great</span>
-                                                <h4 class="mb-0 text-success">9.8</h4>
-                                            </div>
-                                        </div>
+                                    {% empty %}
+                                    <li class="list-group-item text-center">
+                                        <p class="text-muted">No quizzes taken yet.</p>
                                     </li>
-
-                                    <li class="list-group-item">
-                                        <div class="media align-items-center">
-                                            <div class="media-body">
-                                                <a class="text-body" href="{% url 'quiz-results' %}"><strong>Responsive &amp; Retina</strong></a><br>
-                                                <div class="d-flex align-items-center">
-                                                    <small class="text-black-50 text-uppercase mr-2">Course</small>
-                                                    <a href="">Bootstrap Foundations</a>
-                                                </div>
-                                            </div>
-                                            <div class="media-right text-center d-flex align-items-center">
-                                                <span class="text-black-50 mr-3">Failed</span>
-                                                <h4 class="mb-0 text-danger">2.8</h4>
-                                            </div>
-                                        </div>
-                                    </li>
-
+                                    {% endfor %}
                                 </ul>
                             </div>
+                            
                         </div>
                         <div class="col-lg-5">
 

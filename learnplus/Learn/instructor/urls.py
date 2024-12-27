@@ -23,7 +23,7 @@ urlpatterns = [
     path('forum_thread/<slug:slug>/', views.forum_thread, name='instructor-forum-thread'),
 
     # Messages (chat)
-    path('messages/<str:classe>/', views.messages, name='instructor-messages'),
+    path('custom_messages/<str:classe>/', views.custom_messages, name='instructor-messages'),
 
     # Quiz Management
     path('quizzes', views.quizzes, name='instructor-quizzes'),
