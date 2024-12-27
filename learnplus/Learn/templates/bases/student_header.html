@@ -73,7 +73,7 @@
                         <ul class="nav navbar-nav flex-nowrap">
                 
                             <li class="nav-item d-none d-md-flex">
-                                <a href="{% url 'custom_messages' user.student_user.classe  %}" title="Chat" class="nav-link">
+                                <a href="{% url 'messages' user.student_user.classe  %}" title="Chat" class="nav-link">
                                     <i class="material-icons">chat</i>
                                 </a>
                             </li>
@@ -131,7 +131,7 @@
                                         <a class="dropdown-item" href=" {% url 'edit' %}">Profile</a>
                                         <a class="dropdown-item" href="{% url 'profile' %}">Profile
                                             &amp; Public</a>
-                                        <a class="dropdown-item" href="{% url 'custom_messages' user.student_user.classe  %}">Messages</a>
+                                        <a class="dropdown-item" href="{% url 'messages' user.student_user.classe  %}">Messages</a>
                                         <div class="dropdown-divider"></div>
                                     </div>
                                 </li>
@@ -210,7 +210,7 @@
                             </ul>
                         </li>
                         <li class="sidebar-menu-item">
-                            <a class="sidebar-menu-button" href="{% url 'custom_messages' user.student_user.classe %}">
+                            <a class="sidebar-menu-button" href="{% url 'messages' user.student_user.classe %}">
                                 <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">comment</i> Messages
                             </a>
                         </li>

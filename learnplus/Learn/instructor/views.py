@@ -476,7 +476,7 @@ def forum_thread(request, slug):
 ########################################
 
 @login_required(login_url='login')
-def custom_messages(request, classe):
+def messages(request, classe):
     if hasattr(request.user, 'student_user'):
         return redirect('index_student')
     elif hasattr(request.user, 'instructor'):

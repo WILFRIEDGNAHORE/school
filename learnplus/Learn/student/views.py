@@ -266,7 +266,7 @@ def help_center(request):
     
 
 @login_required(login_url = 'login')
-def custom_messages(request, classe):
+def messages(request, classe):
     if request.user.is_authenticated:
         try:
             try:
