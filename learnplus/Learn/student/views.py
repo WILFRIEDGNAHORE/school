@@ -9,6 +9,8 @@ from chat import models as chat_models
 from django.utils.safestring import mark_safe
 from django.utils.timezone import now
 from django.db import transaction
+from django.contrib import messages
+
 import json
 from django.http import JsonResponse 
 from quiz.models import Quiz, Question, Answer, StudentAnswer, TakenQuiz
@@ -266,7 +268,7 @@ def help_center(request):
     
 
 @login_required(login_url = 'login')
-def messages(request, classe):
+def messagess(request, classe):
     if request.user.is_authenticated:
         try:
             try:
@@ -546,57 +548,19 @@ def skip_question(request, quiz_id, question_id):
 def take_quiz(request, pk):
     user = request.user
 
-    # Vérification que l'utilisateur est un étudiant
     if not hasattr(user, 'student_user'):
         return redirect('dashboard')
 
     student = user.student_user
     quiz = get_object_or_404(Quiz, pk=pk, status=True)
 
-    # Vérification si le quiz a déjà été pris
     if TakenQuiz.objects.filter(student=student, quiz=quiz).exists():
-        return redirect('dashboard')  # Ou affichez un message indiquant que le quiz a déjà été complété
+        return redirect('dashboard')
 
-    # Initialiser les variables pour le template
     total_questions = quiz.questions.count()
     answered_questions = student.quiz_answers.filter(answer__question__quiz=quiz).values('answer__question').distinct().count()
-    left_questions = total_questions - answered_questions
     progress_percentage = (answered_questions / total_questions) * 100 if total_questions > 0 else 0
 
-    # Générer les numéros des questions restantes
-    pending_question_numbers = range(answered_questions + 1, total_questions + 1)
-
-    # Si une soumission est reçue
-    if request.method == 'POST':
-        with transaction.atomic():
-            correct_answers = 0
-
-            for question in quiz.questions.all():
-                selected_answer_id = request.POST.get(str(question.id))
-                if selected_answer_id:
-                    selected_answer = get_object_or_404(Answer, id=selected_answer_id)
-
-                    # Enregistrer la réponse de l'étudiant
-                    StudentAnswer.objects.create(student=student, answer=selected_answer)
-
-                    # Vérifier si la réponse est correcte
-                    if selected_answer.is_correct:
-                        correct_answers += 1
-
-            # Calculer le score et enregistrer dans TakenQuiz
-            percentage = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
-            TakenQuiz.objects.create(
-                student=student,
-                quiz=quiz,
-                score=correct_answers,
-                percentage=percentage,
-                date=now()
-            )
-
-        # Rediriger après la soumission
-        return redirect('quiz_result', pk=quiz.pk)
-
-    # Récupérer la prochaine question non répondue
     unanswered_questions = quiz.questions.exclude(
         pk__in=student.quiz_answers.filter(answer__question__quiz=quiz).values_list('answer__question__pk', flat=True)
     ).order_by('id')
@@ -605,22 +569,52 @@ def take_quiz(request, pk):
         current_question = unanswered_questions.first()
         current_question_number = answered_questions + 1
     else:
-        current_question = None
-        current_question_number = None
+        # Si aucune question n'est restante, rediriger vers les résultats
+        messages.success(request, "Vous avez terminé le quiz !")
+        return redirect('quiz_result', pk=quiz.pk)
 
-    # Afficher les questions pour résoudre le quiz
-    questions = quiz.questions.prefetch_related('answers')
+    if request.method == 'POST':
+        selected_answer_id = request.POST.get(str(current_question.id))
+        with transaction.atomic():
+            if selected_answer_id:
+                # Si une réponse est choisie, l'enregistrer
+                selected_answer = get_object_or_404(Answer, id=selected_answer_id)
+                StudentAnswer.objects.create(student=student, answer=selected_answer)
+            else:
+                # Si aucune réponse n'est choisie, enregistrer comme incorrect
+                wrong_answer = Answer.objects.filter(question=current_question, is_correct=False).first()
+                StudentAnswer.objects.create(student=student, answer=wrong_answer)
+
+        unanswered_questions = quiz.questions.exclude(
+            pk__in=student.quiz_answers.filter(answer__question__quiz=quiz).values_list('answer__question__pk', flat=True)
+        ).order_by('id')
+
+        if not unanswered_questions.exists():
+            # Si aucune autre question, enregistrez les résultats et redirigez
+            correct_answers = student.quiz_answers.filter(answer__question__quiz=quiz, answer__is_correct=True).count()
+            percentage = (correct_answers / total_questions) * 100 if total_questions > 0 else 0
+            TakenQuiz.objects.create(
+                student=student,
+                quiz=quiz,
+                score=correct_answers,
+                percentage=percentage,
+                date=now()
+            )
+            messages.success(request, "Vous avez terminé le quiz !")
+            return redirect('quiz_result', pk=quiz.pk)
+
+        return redirect('take_quiz', pk=quiz.pk)
+
     return render(request, 'pages/fixed-student-take-quiz.html', {
         'quiz': quiz,
-        'questions': questions,
         'total_questions': total_questions,
         'answered_questions': answered_questions,
-        'left_questions': left_questions,
         'progress_percentage': progress_percentage,
         'current_question': current_question,
-        'current_question_number': current_question_number,  # Ajouté
-        'pending_question_numbers': pending_question_numbers,  # Ajouté
+        'current_question_number': current_question_number,
+        'is_last_question': unanswered_questions.count() == 1,
     })
+
 @login_required(login_url = 'login')
 def view_course(request):
     if request.user.is_authenticated:
@@ -641,6 +635,10 @@ def view_course(request):
             print(e)
             print("3")
             return redirect("/admin/")
+        
+
+
+        
     
 @login_required(login_url = 'login')
 def account_edit(request):

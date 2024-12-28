@@ -74,4 +74,5 @@ urlpatterns = [
 
     # Forum post
     path('post_forum', views.post_forum, name='instructor_post_forum'),
+    path('forum_thread/<slug>/reponse', views.post_forum_reponse, name='post_forum_reponse'),
 ]

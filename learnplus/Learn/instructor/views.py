@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.utils.safestring import mark_safe
 import json
@@ -905,5 +906,43 @@ def answer_list(request, quiz_id, question_id):
         'answers': answers
     }
     return render(request, 'pages/question-edit-with-answers.html', context)
+
+
+
+@login_required
+@csrf_exempt  # ou configurez la protection CSRF correctement
+def post_forum_reponse(request, slug):
+    if request.method == 'POST':
+        reponse_content = request.POST.get('reponse', '').strip()
+        try:
+            sujet = forum_models.Sujet.objects.get(slug=slug)
+        except forum_models.Sujet.DoesNotExist:
+            return JsonResponse({
+                'success': False,
+                'message': 'Le sujet est introuvable.'
+            })
+
+        if not reponse_content:
+            return JsonResponse({
+                'success': False,
+                'message': 'Le contenu de la réponse est vide.'
+            })
+
+        forum_models.Reponse.objects.create(
+            sujet=sujet,
+            user=request.user,
+            reponse=reponse_content
+        )
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Votre réponse a été publiée avec succès.'
+        })
+
+    return JsonResponse({
+        'success': False,
+        'message': 'Méthode non autorisée.'
+    })
+
 
 
